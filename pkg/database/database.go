@@ -7,7 +7,6 @@ package database
 
 import (
 	"github.com/burravlev/avito-tech-test/config"
-	"github.com/burravlev/avito-tech-test/internal/models"
 	"github.com/sirupsen/logrus"
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
@@ -18,6 +17,6 @@ func Connect(cfg *config.DB) (*gorm.DB, error) {
 	if err != nil {
 		logrus.Fatalf("error connecting to database: %s", err)
 	}
-	db.AutoMigrate(&models.User{}, &models.Segment{})
-	return nil, nil
+	// db.AutoMigrate(&models.SegmentUser{}, &models.Segment{})
+	return db, nil
 }
