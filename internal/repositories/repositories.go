@@ -7,4 +7,6 @@ type Segment interface {
 	Save(*models.Segment) error
 	// Deletes segment by segment name
 	Delete(name string) error
+	// Gets active user's segments
+	GetByUser(uint) ([]models.Segment, error)
 }

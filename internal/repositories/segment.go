@@ -1,6 +1,8 @@
 package repositories
 
 import (
+	"fmt"
+
 	"github.com/burravlev/avito-tech-test/internal/models"
 	"gorm.io/gorm"
 )
@@ -30,11 +32,23 @@ func (s *segment) Delete(name string) error {
 		tx.Rollback()
 		return err
 	}
-	err = tx.Select("SegmentUsers").Delete(&segment).Error
+	err = tx.Exec("DELETE FROM user_segments WHERE segment_id = ?", segment.ID).Error
+	if err != nil {
+		tx.Rollback()
+		return err
+	}
+	err = tx.Delete(&segment).Error
 	if err != nil {
 		tx.Rollback()
 		return err
 	}
 	tx.Commit()
 	return err
+}
+
+func (s *segment) GetByUser(userId uint) ([]models.Segment, error) {
+	var user models.User
+	err := s.db.Model(&models.User{}).Preload("Segments").Where("user_id = ?", userId).Find(&user).Error
+	fmt.Println(user)
+	return user.Segments, err
 }

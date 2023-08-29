@@ -7,4 +7,6 @@ type Segments interface {
 	Save(*gin.Context)
 	// deletes segment by slug name
 	Delete(*gin.Context)
+	// get all user's active segments
+	UserSegments(*gin.Context)
 }

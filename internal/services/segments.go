@@ -28,3 +28,11 @@ func (s *segments) Save(segemnt *models.Segment) error {
 func (s *segments) Delete(name string) error {
 	return s.repository.Delete(name)
 }
+
+func (s *segments) Add(userId uint, segments []string) {
+
+}
+
+func (s *segments) GetByUser(userId uint) ([]models.Segment, error) {
+	return s.repository.GetByUser(userId)
+}

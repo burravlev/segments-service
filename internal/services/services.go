@@ -7,4 +7,10 @@ type Segment interface {
 	Save(*models.Segment) error
 	// Delete segment by slug name
 	Delete(string) error
+	GetByUser(uint) ([]models.Segment, error)
+}
+
+type User interface {
+	// get user's segments
+	UserSegments(uint) ([]Segment, error)
 }

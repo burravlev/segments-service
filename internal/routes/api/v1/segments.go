@@ -5,10 +5,8 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-type segmentRoutes struct {
-}
-
 func SegmentRoutes(r *gin.Engine, c controllers.Segments) {
 	r.POST("/api/v1/segments", c.Save)
 	r.DELETE("/api/v1/segments/:name", c.Delete)
+	r.GET("/api/v1/users/:id/segments", c.UserSegments)
 }
