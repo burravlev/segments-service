@@ -1,10 +1,13 @@
 package v1
 
-import "github.com/gin-gonic/gin"
+import (
+	"github.com/burravlev/avito-tech-test/internal/controllers"
+	"github.com/gin-gonic/gin"
+)
 
 type segmentRoutes struct {
 }
 
-func NewSegmentRoutes(r *gin.Engine) {
-	r.POST("/api/v1/segments")
+func SegmentRoutes(r *gin.Engine, c controllers.Segments) {
+	r.POST("/api/v1/segments", c.Save)
 }

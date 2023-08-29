@@ -5,3 +5,7 @@ type SegmentUser struct {
 	UserID    uint `db:"user_id"`
 	SegmentID uint
 }
+
+func (SegmentUser) TableName() string {
+	return "segment_users"
+}

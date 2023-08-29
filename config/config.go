@@ -1,8 +1,15 @@
 package config
 
+import (
+	"fmt"
+
+	"github.com/ilyakaznacheev/cleanenv"
+)
+
 type (
 	Config struct {
-		DB `yaml:"datasource"`
+		DB  `yaml:"datasource"`
+		Log `yaml:"log"`
 	}
 
 	DB struct {
@@ -10,10 +17,19 @@ type (
 	}
 
 	Log struct {
-		Level string
+		Level string `yaml:"level"`
 	}
 )
 
 func Load(path string) (*Config, error) {
-	return nil, nil
+	var cfg Config
+	err := cleanenv.ReadConfig(path, &cfg)
+	if err != nil {
+		return nil, fmt.Errorf("error reading config file: %s", err)
+	}
+	err = cleanenv.UpdateEnv(&cfg)
+	if err != nil {
+		return nil, fmt.Errorf("error updating env: %s", err)
+	}
+	return &cfg, nil
 }

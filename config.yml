@@ -1,0 +1,2 @@
+datasource:
+  url: "postgres://root:fxgQb4Xi@45.12.237.118:5432/segments_db"

@@ -5,10 +5,14 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-type segemnts struct {
+type segments struct {
 	service services.Segment
 }
 
-func Create(c *gin.Context) {
+func SegmentController(s services.Segment) Segments {
+	return &segments{s}
+}
+
+func (s *segments) Save(c *gin.Context) {
 
 }
