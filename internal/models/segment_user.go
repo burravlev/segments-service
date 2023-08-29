@@ -1,8 +1,8 @@
 package models
 
 type SegmentUser struct {
-	ID        uint `db:"id" gorm:"primarykey"`
-	UserID    uint `db:"user_id"`
+	ID        uint `db:"id" gorm:"primary_key"`
+	UserID    uint `db:"user_id" binding:"required"`
 	SegmentID uint
 }
 

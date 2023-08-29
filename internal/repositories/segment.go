@@ -13,9 +13,6 @@ func SegmentRepository(db *gorm.DB) Segment {
 	return &segment{db}
 }
 
-func (s *segment) Save(segment *models.Segment) (*models.Segment, error) {
-	tx := s.db.Begin()
-	result := tx.Model(segment).Save(&segment)
-	tx.Commit()
-	return segment, result.Error
+func (s *segment) Save(segment *models.Segment) error {
+	return s.db.Model(segment).Save(&segment).Error
 }
