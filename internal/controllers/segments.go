@@ -1,6 +1,7 @@
 package controllers
 
 import (
+	"fmt"
 	"net/http"
 
 	"github.com/burravlev/avito-tech-test/internal/models"
@@ -29,6 +30,13 @@ func (s *segments) Save(c *gin.Context) {
 	c.JSON(http.StatusCreated, body)
 }
 
-func (s *segments) Remove(c *gin.Context) {
+func (s *segments) Delete(c *gin.Context) {
+	name := c.Param("name")
+	c.String(http.StatusOK, name)
+	err := s.service.Delete(name)
+	fmt.Println(err)
+}
 
+func (s *segments) Get(c *gin.Context) {
+	c.JSON(200, nil)
 }

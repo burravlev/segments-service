@@ -9,18 +9,22 @@ import (
 	"gorm.io/gorm"
 )
 
-type segemnts struct {
+type segments struct {
 	repository repositories.Segment
 }
 
 func SegmentService(repository repositories.Segment) Segment {
-	return &segemnts{repository}
+	return &segments{repository}
 }
 
-func (s *segemnts) Save(segemnt *models.Segment) error {
+func (s *segments) Save(segemnt *models.Segment) error {
 	err := s.repository.Save(segemnt)
 	if errors.Is(gorm.ErrDuplicatedKey, err) {
 		return fmt.Errorf("duplicated key")
 	}
 	return err
+}
+
+func (s *segments) Delete(name string) error {
+	return s.repository.Delete(name)
 }

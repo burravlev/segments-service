@@ -10,4 +10,5 @@ type segmentRoutes struct {
 
 func SegmentRoutes(r *gin.Engine, c controllers.Segments) {
 	r.POST("/api/v1/segments", c.Save)
+	r.DELETE("/api/v1/segments/:name", c.Delete)
 }
