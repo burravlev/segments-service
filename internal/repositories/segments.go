@@ -22,6 +22,10 @@ func SegmentRespository(db *gorm.DB) Segment {
 
 // saves segment if not exists
 func (s *segment) Create(segment *models.Segment) error {
+	if 0 < *segment.PerCent && *segment.PerCent <= 100 {
+		return s.create(segment)
+	}
+
 	tx := s.db.Begin()
 	err := tx.Exec("set transaction isolation level repeatable read").Error
 	if err != nil {
@@ -29,7 +33,8 @@ func (s *segment) Create(segment *models.Segment) error {
 		return err
 	}
 	var exists bool
-	err = tx.Model(&models.Segment{}).Select("count(*) > 0").Where("name = ?", segment.Name).Find(&exists).Error
+	err = tx.Model(&models.Segment{}).Select("count(*) > 0").
+		Where("name = ?", segment.Name).Find(&exists).Error
 	if err != nil {
 		tx.Rollback()
 		return err
@@ -46,13 +51,40 @@ func (s *segment) Create(segment *models.Segment) error {
 	return nil
 }
 
+func (s *segment) create(segment *models.Segment) error {
+	var users []uint
+	tx := s.db.Begin()
+	err := tx.Exec("set transaction isolation level repeatable read").Error
+	if err != nil {
+		return err
+	}
+	err = tx.Model(&models.Segment{}).Distinct("user_id").Find(&users).Error
+	segments := autoSegments(users, *segment.PerCent, segment.Name)
+	err = s.db.Clauses(clause.OnConflict{DoNothing: true}).Create(&segments).Error
+	return nil
+}
+
+func autoSegments(users []uint, perCent int, name string) []models.Segment {
+	segments := []models.Segment{}
+	frequency := 100 / perCent
+	for i := range users {
+		if i%frequency == 0 {
+			segments = append(segments, models.Segment{
+				UserID: &users[i],
+				Name:   name,
+			})
+		}
+	}
+	return segments
+}
+
 func (s *segment) Delete(name string) error {
-	return s.db.Exec("UPDATE segments SET deleted = now() WHERE name = ?", name).Error
+	return s.db.Exec("DELETE FROM segments WHERE name = ?", name).Error
 }
 
 func (s *segment) GetByUserID(userId uint) ([]models.Segment, error) {
 	var segments []models.Segment
-	err := s.db.Model(&models.Segment{}).Where("user_id = ? and (current_timestamp < deleted or deleted is null)", userId).Find(&segments).Error
+	err := s.db.Model(&models.Segment{}).Where("user_id = ? and name is not null and name != ? and (current_timestamp < deleted or deleted is null)", userId, "").Find(&segments).Error
 	return segments, err
 }
 
@@ -83,7 +115,7 @@ func (s *segment) Update(userId uint, add []models.Segment, delete []string) ([]
 		return nil, err
 	}
 	err = tx.
-		Where("user_id = ? and (current_timestamp < deleted or deleted is null)", userId).
+		Where("user_id = ? and name is not null and name != ? and (current_timestamp < deleted or deleted is null)", userId, "").
 		Find(&add).Error
 	if err != nil {
 		tx.Rollback()

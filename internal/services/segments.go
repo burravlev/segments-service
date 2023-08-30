@@ -2,12 +2,10 @@ package services
 
 import (
 	"fmt"
-	"os"
 	"time"
 
 	"github.com/burravlev/avito-tech-test/internal/models"
 	"github.com/burravlev/avito-tech-test/internal/repositories"
-	"github.com/gocarina/gocsv"
 )
 
 type segment struct {
@@ -42,8 +40,9 @@ func (s *segment) GenerateReport(userId uint, from, to string) (string, error) {
 		return "", err
 	}
 	segments, err := s.repository.GetInInterval(userId, f, t)
+
 	filename := fmt.Sprintf(`%d-%s-%s.csv`, userId, from, to)
-	err = createCSV(segments, filename)
+	err = createCSV(marshal(segments), filename)
 	return filename, err
 }
 
@@ -64,14 +63,4 @@ func parseTime(from, to string) (time.Time, time.Time, error) {
 		}
 	}
 	return f, t, nil
-}
-
-func createCSV(segments []models.Segment, filename string) error {
-	path := "files\\" + filename
-	file, err := os.OpenFile(path, os.O_RDWR|os.O_CREATE, os.ModePerm)
-	if err != nil {
-		return err
-	}
-	defer file.Close()
-	return gocsv.MarshalFile(&segments, file)
 }
