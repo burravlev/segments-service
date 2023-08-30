@@ -11,4 +11,6 @@ type Segments interface {
 	GetUserSegments(*gin.Context)
 	// update user's active segments
 	UpdateSegments(*gin.Context)
+	// generate .csv file with user's segments history
+	History(c *gin.Context)
 }

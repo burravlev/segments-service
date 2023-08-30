@@ -10,5 +10,7 @@ type Segment interface {
 	// gets user's segments
 	GetUserSegments(uint) (*models.User, error)
 	// updates user's segments
-	UpdateSegments(userId uint, add, delete []string) (*models.User, error)
+	UpdateSegments(userId uint, add []models.Segment, delete []string) (*models.User, error)
+	// generate report
+	GenerateReport(userId uint, from, to string) (string, error)
 }

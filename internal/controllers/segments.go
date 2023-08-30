@@ -9,6 +9,7 @@ import (
 	"github.com/burravlev/avito-tech-test/internal/models"
 	"github.com/burravlev/avito-tech-test/internal/services"
 	"github.com/gin-gonic/gin"
+	"github.com/sirupsen/logrus"
 	log "github.com/sirupsen/logrus"
 	"gorm.io/gorm"
 )
@@ -77,6 +78,25 @@ func (s *segments) UpdateSegments(c *gin.Context) {
 		log.Errorf("controllers.UpdateSegments: %s", err)
 	}
 	c.JSON(200, user)
+}
+
+func (s *segments) History(c *gin.Context) {
+	id, ok := extractID(c)
+	if !ok {
+		return
+	}
+	from := c.Query("from")
+	to := c.Query("to")
+	if from == "" {
+		c.JSON(http.StatusBadRequest, models.Error{Message: "Query param \"from\" can't be empty"})
+		return
+	}
+	filename, err := s.service.GenerateReport(uint(id), from, to)
+	if err != nil {
+		logrus.Error(err)
+		return
+	}
+	c.JSON(http.StatusOK, gin.H{"url": "/files/reports/" + filename})
 }
 
 func extractID(c *gin.Context) (int, bool) {

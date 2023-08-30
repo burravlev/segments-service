@@ -2,5 +2,5 @@ package models
 
 type User struct {
 	ID       uint      `json:"id"`
-	Segments []Segment `json:"segments"`
+	Segments []Segment `json:"segments,omitempty"`
 }

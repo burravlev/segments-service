@@ -13,11 +13,14 @@ import (
 	log "github.com/sirupsen/logrus"
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
+	"gorm.io/gorm/logger"
 )
 
 func Connect(cfg *config.DB) (*gorm.DB, error) {
 	fmt.Println(cfg.URL)
-	db, err := gorm.Open(postgres.Open(cfg.URL), &gorm.Config{})
+	db, err := gorm.Open(postgres.Open(cfg.URL), &gorm.Config{
+		Logger: logger.Default.LogMode(logger.Info),
+	})
 	if err != nil {
 		return nil, err
 	}

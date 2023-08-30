@@ -30,6 +30,6 @@ func Run(configPath string) {
 	segmentService := services.SegmentService(segmentRepository)
 	segmentController := controllers.SegmentsController(segmentService)
 	v1.SegmentRoutes(r, segmentController)
-
+	v1.FileRoutes(r)
 	r.Run()
 }
