@@ -3,10 +3,8 @@ package repositories
 import "github.com/burravlev/avito-tech-test/internal/models"
 
 type Segment interface {
-	// Save creates or updates segment
-	Save(*models.Segment) error
-	// Deletes segment by segment name
+	Create(*models.Segment) error
 	Delete(name string) error
-	// Gets active user's segments
-	GetByUser(uint) ([]models.Segment, error)
+	GetByUserID(userId uint) ([]models.Segment, error)
+	Update(userId uint, add, delete []string) ([]models.Segment, error)
 }

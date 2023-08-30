@@ -26,9 +26,9 @@ func Run(configPath string) {
 	}
 	r := gin.Default()
 
-	segmentRepository := repositories.SegmentRepository(db)
+	segmentRepository := repositories.SegmentRespository(db)
 	segmentService := services.SegmentService(segmentRepository)
-	segmentController := controllers.SegmentController(segmentService)
+	segmentController := controllers.SegmentsController(segmentService)
 	v1.SegmentRoutes(r, segmentController)
 
 	r.Run()

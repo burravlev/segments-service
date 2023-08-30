@@ -1,38 +1,32 @@
 package services
 
 import (
-	"errors"
-	"fmt"
-
 	"github.com/burravlev/avito-tech-test/internal/models"
 	"github.com/burravlev/avito-tech-test/internal/repositories"
-	"gorm.io/gorm"
 )
 
-type segments struct {
+type segment struct {
 	repository repositories.Segment
 }
 
 func SegmentService(repository repositories.Segment) Segment {
-	return &segments{repository}
+	return &segment{repository}
 }
 
-func (s *segments) Save(segemnt *models.Segment) error {
-	err := s.repository.Save(segemnt)
-	if errors.Is(gorm.ErrDuplicatedKey, err) {
-		return fmt.Errorf("duplicated key")
-	}
-	return err
+func (s *segment) Create(segment *models.Segment) error {
+	return s.repository.Create(segment)
 }
 
-func (s *segments) Delete(name string) error {
+func (s *segment) Delete(name string) error {
 	return s.repository.Delete(name)
 }
 
-func (s *segments) Add(userId uint, segments []string) {
-
+func (s *segment) GetUserSegments(userId uint) (*models.User, error) {
+	segments, err := s.repository.GetByUserID(userId)
+	return &models.User{ID: userId, Segments: segments}, err
 }
 
-func (s *segments) GetByUser(userId uint) ([]models.Segment, error) {
-	return s.repository.GetByUser(userId)
+func (s *segment) UpdateSegments(userId uint, add, delete []string) (*models.User, error) {
+	segments, err := s.repository.Update(userId, add, delete)
+	return &models.User{ID: userId, Segments: segments}, err
 }

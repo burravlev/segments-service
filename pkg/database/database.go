@@ -22,6 +22,6 @@ func Connect(cfg *config.DB) (*gorm.DB, error) {
 		return nil, err
 	}
 	log.Info("Migrating database...")
-	err = db.AutoMigrate(&models.Segment{}, &models.User{})
+	err = db.AutoMigrate(&models.Segment{})
 	return db, err
 }

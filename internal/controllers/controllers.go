@@ -3,10 +3,12 @@ package controllers
 import "github.com/gin-gonic/gin"
 
 type Segments interface {
-	// create new segment by slug name
-	Save(*gin.Context)
-	// deletes segment by slug name
+	// create segment
+	Create(*gin.Context)
+	// deletes segment
 	Delete(*gin.Context)
-	// get all user's active segments
-	UserSegments(*gin.Context)
+	// gets active user's segments
+	GetUserSegments(*gin.Context)
+	// update user's active segments
+	UpdateSegments(*gin.Context)
 }

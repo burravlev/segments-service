@@ -17,51 +17,74 @@ type segments struct {
 	service services.Segment
 }
 
-func SegmentController(s services.Segment) Segments {
-	return &segments{s}
+func SegmentsController(service services.Segment) Segments {
+	return &segments{service}
 }
 
-func (s *segments) Save(c *gin.Context) {
+func (s *segments) Create(c *gin.Context) {
 	var body models.Segment
-	if err := c.ShouldBindJSON(&body); err != nil {
-		c.JSON(http.StatusBadRequest, models.Error{Message: err.Error()})
+	if err := c.BindJSON(&body); err != nil {
+		c.JSON(http.StatusBadRequest, models.Error{Message: "Field name can't be empty"})
 		return
 	}
-	if err := s.service.Save(&body); err != nil {
-		c.JSON(http.StatusBadRequest, models.Error{Message: err.Error()})
-		return
+	err := s.service.Create(&body)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, models.Error{Message: "Internal server error"})
+	} else {
+		c.JSON(http.StatusCreated, body)
 	}
-	c.JSON(http.StatusCreated, body)
 }
 
 func (s *segments) Delete(c *gin.Context) {
 	name := c.Param("name")
-	err := s.service.Delete(name)
-	if err != nil {
-		log.Error(err)
-		c.JSON(http.StatusInternalServerError, models.Error{Message: "server error occured"})
+	if err := s.service.Delete(name); err != nil {
+		log.Errorf("controllers.Delete: %s", err)
+		c.JSON(http.StatusInternalServerError, models.Error{Message: "Internal server error"})
 		return
 	}
 	c.Status(http.StatusNoContent)
 }
 
-func (s *segments) UserSegments(c *gin.Context) {
-	param := c.Param("id")
-	id, err := strconv.Atoi(param)
-	fmt.Println(id)
-	if err != nil {
-		c.JSON(http.StatusBadRequest, models.Error{Message: err.Error()})
+func (s *segments) GetUserSegments(c *gin.Context) {
+	id, ok := extractID(c)
+	if !ok {
 		return
 	}
-	segments, err := s.service.GetByUser(uint(id))
-	if errors.Is(gorm.ErrRecordNotFound, err) {
-		c.JSON(http.StatusNotFound, models.Error{Message: "User doesn't exist"})
+	user, err := s.service.GetUserSegments(uint(id))
+	if errors.Is(err, gorm.ErrRecordNotFound) {
+		c.JSON(http.StatusNotFound, models.Error{Message: "User not found"})
 		return
-	}
-	if err != nil {
-		log.Error(err)
+	} else if err != nil {
 		c.JSON(http.StatusInternalServerError, models.Error{Message: "Internal server error"})
 		return
 	}
-	c.JSON(http.StatusOK, segments)
+	c.JSON(http.StatusOK, user)
+}
+
+func (s *segments) UpdateSegments(c *gin.Context) {
+	id, ok := extractID(c)
+	if !ok {
+		return
+	}
+	var body models.SegmentRequest
+	if err := c.BindJSON(&body); err != nil {
+		c.JSON(http.StatusBadRequest, models.Error{Message: err.Error()})
+		return
+	}
+	fmt.Println(body)
+	user, err := s.service.UpdateSegments(uint(id), body.Add, body.Delete)
+	if err != nil {
+		log.Errorf("controllers.UpdateSegments: %s", err)
+	}
+	c.JSON(200, user)
+}
+
+func extractID(c *gin.Context) (int, bool) {
+	param := c.Param("id")
+	id, err := strconv.Atoi(param)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, models.Error{Message: "ID must be number"})
+		return 0, false
+	}
+	return id, true
 }
