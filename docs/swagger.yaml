@@ -4,6 +4,11 @@ definitions:
       message:
         type: string
     type: object
+  models.History:
+    properties:
+      url:
+        type: string
+    type: object
   models.Segment:
     properties:
       delete_at:
@@ -18,24 +23,43 @@ definitions:
     required:
     - name
     type: object
+  models.SegmentRequest:
+    properties:
+      add:
+        items:
+          $ref: '#/definitions/models.Segment'
+        type: array
+      delete:
+        items:
+          type: string
+        type: array
+    type: object
   models.User:
     properties:
       id:
         example: 13214
         type: integer
       segments:
-        items:
-          $ref: '#/definitions/models.Segment'
-        type: array
+        type: object
     type: object
+host: localhost:8080
 info:
   contact: {}
+  title: Avito A/B testing service
+  version: "1.0"
 paths:
   /api/v1/segments:
     post:
       consumes:
       - application/json
       description: create segment
+      parameters:
+      - description: Segment Info
+        in: body
+        name: segment
+        required: true
+        schema:
+          $ref: '#/definitions/models.Segment'
       produces:
       - application/json
       responses:
@@ -57,7 +81,12 @@ paths:
   /api/v1/segments/{name}:
     delete:
       description: deletes segment (also deletes it from users)
-      operationId: create-segment
+      parameters:
+      - description: Segment slug name
+        in: path
+        name: name
+        required: true
+        type: string
       responses:
         "204":
           description: No Content
@@ -70,10 +99,47 @@ paths:
       - segments
   /api/v1/users/{id}/segments:
     get:
+      description: Gets user's active segments
+      parameters:
+      - description: User ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.User'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/models.Error'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/models.Error'
+      summary: User's active segments
+      tags:
+      - users
+    post:
       consumes:
       - application/json
-      description: Deletes user's segments
-      operationId: update-user-segments
+      description: Adds and deletes user's segments
+      parameters:
+      - description: User ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      - description: Segments update
+        in: body
+        name: user
+        required: true
+        schema:
+          $ref: '#/definitions/models.SegmentRequest'
       produces:
       - application/json
       responses:
@@ -92,4 +158,67 @@ paths:
       summary: Update user's segments
       tags:
       - users
+  /api/v1/users/{id}/segments/history:
+    get:
+      consumes:
+      - application/json
+      description: Deletes user's segments
+      parameters:
+      - description: User ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      - description: From date
+        in: query
+        name: from
+        required: true
+        type: string
+      - description: To date
+        in: query
+        name: from
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.History'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/models.Error'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/models.Error'
+      summary: User report .csv file
+      tags:
+      - users
+  /files/reports/{name}:
+    post:
+      description: Downloads .csv file
+      parameters:
+      - description: filename
+        in: path
+        name: name
+        required: true
+        type: string
+      produces:
+      - text/csv
+      responses:
+        "200":
+          description: OK
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/models.Error'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/models.Error'
+      summary: Download .csv file
+      tags:
+      - files
 swagger: "2.0"

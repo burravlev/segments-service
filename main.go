@@ -8,6 +8,13 @@ import (
 
 var configPath = "config.yml"
 
+//	@title			Avito A/B testing service
+//	@version		1.0
+//	@desccription	Microservice for sement users
+
+//	@host	localhost:8080
+//
+// BasePath /
 func main() {
 	app.Run(configPath)
 }

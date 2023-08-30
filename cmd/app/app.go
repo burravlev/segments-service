@@ -12,13 +12,6 @@ import (
 	log "github.com/sirupsen/logrus"
 )
 
-//	@title			Avito A/B testing service
-//	@version		1.0
-//	@desccription	Microservice for sement users
-
-//	@host	localhost:8080
-// BasePath /
-
 func Run(configPath string) {
 	// configuration
 	cfg, err := config.Load(configPath)

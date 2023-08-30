@@ -27,9 +27,10 @@ func SegmentsController(service services.Segment) Segments {
 //	@Tags			segments
 //	@Accept			json
 //	@Produce		json
-//	@Success		201	{object}	models.Segment
-//	@Failure		400	{object}	models.Error
-//	@Failure		500	{object}	models.Error
+//	@Param			segment	body		models.Segment	true	"Segment Info"
+//	@Success		201		{object}	models.Segment
+//	@Failure		400		{object}	models.Error
+//	@Failure		500		{object}	models.Error
 //	@Router			/api/v1/segments [post]
 func (s *segments) Create(c *gin.Context) {
 	var body models.Segment
@@ -48,7 +49,7 @@ func (s *segments) Create(c *gin.Context) {
 //	@Summary		Delete segment
 //	@Tags			segments
 //	@Description	deletes segment (also deletes it from users)
-//	@ID				create-segment
+//	@Param			name	path	string	true	"Segment slug name"
 //	@Success		204
 //	@Failure		500	{object}	models.Error
 //	@Router			/api/v1/segments/{name} [delete]
@@ -65,8 +66,8 @@ func (s *segments) Delete(c *gin.Context) {
 //	@Summary		User's active segments
 //	@Tags			users
 //	@Description	Gets user's active segments
-//	@ID				get-user-segments
 //	@Produce		json
+//	@Param			id	path		int	true	"User ID"
 //	@Success		200	{object}	models.User
 //	@Failure		404	{object}	models.Error
 //	@Failure		500	{object}	models.Error
@@ -89,14 +90,15 @@ func (s *segments) GetUserSegments(c *gin.Context) {
 
 //	@Summary		Update user's segments
 //	@Tags			users
-//	@Description	Deletes user's segments
-//	@ID				update-user-segments
+//	@Description	Adds and deletes user's segments
 //	@Accept			json
 //	@Produce		json
-//	@Success		200	{object}	models.User
-//	@Failure		404	{object}	models.Error
-//	@Failure		500	{object}	models.Error
-//	@Router			/api/v1/users/{id}/segments [get]
+//	@Param			id		path		int						true	"User ID"
+//	@Param			user	body		models.SegmentRequest	true	"Segments update"
+//	@Success		200		{object}	models.User
+//	@Failure		404		{object}	models.Error
+//	@Failure		500		{object}	models.Error
+//	@Router			/api/v1/users/{id}/segments [post]
 func (s *segments) UpdateSegments(c *gin.Context) {
 	id, ok := extractID(c)
 	if !ok {
@@ -111,10 +113,23 @@ func (s *segments) UpdateSegments(c *gin.Context) {
 	user, err := s.service.UpdateSegments(uint(id), body.Add, body.Delete)
 	if err != nil {
 		log.Errorf("controllers.UpdateSegments: %s", err)
+		c.JSON(http.StatusInternalServerError, models.Error{Message: "Internal server error"})
 	}
-	c.JSON(200, user)
+	c.JSON(http.StatusOK, user)
 }
 
+//	@Summary		User report .csv file
+//	@Tags			users
+//	@Description	Deletes user's segments
+//	@Accept			json
+//	@Produce		json
+//	@Param			id		path		int		true	"User ID"
+//	@Param			from	query		string	true	"From date"
+//	@Param			from	query		string	false	"To date"
+//	@Success		200		{object}	models.History
+//	@Failure		400		{object}	models.Error
+//	@Failure		500		{object}	models.Error
+//	@Router			/api/v1/users/{id}/segments/history [get]
 func (s *segments) History(c *gin.Context) {
 	id, ok := extractID(c)
 	if !ok {
@@ -129,6 +144,7 @@ func (s *segments) History(c *gin.Context) {
 	filename, err := s.service.GenerateReport(uint(id), from, to)
 	if err != nil {
 		logrus.Error(err)
+		c.JSON(http.StatusInternalServerError, models.Error{Message: "Internal server error"})
 		return
 	}
 	c.JSON(http.StatusOK, gin.H{"url": "/files/reports/" + filename})
