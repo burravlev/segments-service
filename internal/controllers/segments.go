@@ -22,6 +22,15 @@ func SegmentsController(service services.Segment) Segments {
 	return &segments{service}
 }
 
+//	@Summary		Create segment
+//	@Description	create segment
+//	@Tags			segments
+//	@Accept			json
+//	@Produce		json
+//	@Success		201	{object}	models.Segment
+//	@Failure		400	{object}	models.Error
+//	@Failure		500	{object}	models.Error
+//	@Router			/api/v1/segments [post]
 func (s *segments) Create(c *gin.Context) {
 	var body models.Segment
 	if err := c.BindJSON(&body); err != nil {
@@ -36,6 +45,13 @@ func (s *segments) Create(c *gin.Context) {
 	}
 }
 
+//	@Summary		Delete segment
+//	@Tags			segments
+//	@Description	deletes segment (also deletes it from users)
+//	@ID				create-segment
+//	@Success		204
+//	@Failure		500	{object}	models.Error
+//	@Router			/api/v1/segments/{name} [delete]
 func (s *segments) Delete(c *gin.Context) {
 	name := c.Param("name")
 	if err := s.service.Delete(name); err != nil {
@@ -46,6 +62,15 @@ func (s *segments) Delete(c *gin.Context) {
 	c.Status(http.StatusNoContent)
 }
 
+//	@Summary		User's active segments
+//	@Tags			users
+//	@Description	Gets user's active segments
+//	@ID				get-user-segments
+//	@Produce		json
+//	@Success		200	{object}	models.User
+//	@Failure		404	{object}	models.Error
+//	@Failure		500	{object}	models.Error
+//	@Router			/api/v1/users/{id}/segments [get]
 func (s *segments) GetUserSegments(c *gin.Context) {
 	id, ok := extractID(c)
 	if !ok {
@@ -62,6 +87,16 @@ func (s *segments) GetUserSegments(c *gin.Context) {
 	c.JSON(http.StatusOK, user)
 }
 
+//	@Summary		Update user's segments
+//	@Tags			users
+//	@Description	Deletes user's segments
+//	@ID				update-user-segments
+//	@Accept			json
+//	@Produce		json
+//	@Success		200	{object}	models.User
+//	@Failure		404	{object}	models.Error
+//	@Failure		500	{object}	models.Error
+//	@Router			/api/v1/users/{id}/segments [get]
 func (s *segments) UpdateSegments(c *gin.Context) {
 	id, ok := extractID(c)
 	if !ok {

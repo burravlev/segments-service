@@ -3,6 +3,8 @@ package v1
 import (
 	"github.com/burravlev/avito-tech-test/internal/controllers"
 	"github.com/gin-gonic/gin"
+	swaggerFiles "github.com/swaggo/files"
+	ginSwagger "github.com/swaggo/gin-swagger"
 )
 
 func SegmentRoutes(r *gin.Engine, c controllers.Segments) {
@@ -13,4 +15,6 @@ func SegmentRoutes(r *gin.Engine, c controllers.Segments) {
 	r.GET("/api/v1/users/:id/segments", c.GetUserSegments)
 	r.POST("/api/v1/users/:id/segments", c.UpdateSegments)
 	r.GET("/api/v1/users/:id/segments/history", c.History)
+
+	r.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
 }

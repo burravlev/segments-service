@@ -1,0 +1,1 @@
+CREATE DATABASE segments_db;
