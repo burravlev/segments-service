@@ -22,7 +22,7 @@ func TestSegments_Create(t *testing.T) {
 	// repository := repositories.SegmentRespository(gormDB)
 	// segment := models.Segment{
 	// 	ID:     1,
-	// 	UserID: 12,
+	// 	UserID: &12,
 	// 	Name:   "test",
 	// }
 	// mock.MatchExpectationsInOrder(false)

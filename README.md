@@ -40,7 +40,7 @@ curl --location --request DELETE 'http://localhost:8080/api/v1/segments/AVITO_TE
 curl --location --request POST 'http://localhost:8080/api/v1/users/1/segments' \
 --header 'Content-Type: application/json' \
 --data-raw '{
-    "add":[{"name" : "AVITO_TEST_CUPONS", "delete_at" : "2024-10-02T15:00:00.05Z"}],
+    "add":[{"name" : "AVITO_TEST_CUPONS", "delete_at" : "2024-10-02"}],
     "delete" : ["AVITO_TEST_VOICES"]
 }'
 ```
