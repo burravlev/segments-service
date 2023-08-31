@@ -50,7 +50,7 @@ curl --location --request POST 'http://localhost:8080/api/v1/users/1/segments' \
     "id" : 1,
     "segments" : [{
         "name" : "AVITO_TEST_COUPONS",
-        "delete_at" : "2024-10-02T15:00:00.05Z"
+        "delete_at" : "2024-10-02"
     }]
 }
 ```
