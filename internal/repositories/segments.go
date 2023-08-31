@@ -23,10 +23,6 @@ func SegmentRespository(db *gorm.DB) Segment {
 
 // saves segment if not exists
 func (s *segment) Create(segment *models.Segment) error {
-	if segment.PerCent != nil {
-		return s.create(segment)
-	}
-
 	tx := s.db.Begin()
 	err := tx.Exec("set transaction isolation level repeatable read").Error
 	if err != nil {
@@ -52,7 +48,7 @@ func (s *segment) Create(segment *models.Segment) error {
 	return nil
 }
 
-func (s *segment) create(segment *models.Segment) error {
+func (s *segment) CreateWithAutoSplit(segment *models.Segment) error {
 	var users []uint
 	tx := s.db.Begin()
 	err := tx.Exec("set transaction isolation level repeatable read").Error

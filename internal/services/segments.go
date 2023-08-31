@@ -18,6 +18,9 @@ func SegmentService(repository repositories.Segment) Segment {
 }
 
 func (s *segment) Create(segment *models.Segment) error {
+	if segment.PerCent != nil {
+		return s.repository.CreateWithAutoSplit(segment)
+	}
 	return s.repository.Create(segment)
 }
 

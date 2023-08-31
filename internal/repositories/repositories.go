@@ -17,4 +17,6 @@ type Segment interface {
 	Update(userId uint, add []models.Segment, delete []string) ([]models.Segment, error)
 	// gets user's segment in time interval
 	GetInInterval(userId uint, from, to time.Time) ([]models.Segment, error)
+	// creates segment with rendom percentage of all users in database
+	CreateWithAutoSplit(segment *models.Segment) error
 }
