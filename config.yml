@@ -3,3 +3,6 @@ datasource:
   url: "postgres://root:fgGxgIllJf@postgres:5432/segments_db?sslmode=disable"
 log:
   level: info
+# relative path to files folder
+files:
+  path: files/

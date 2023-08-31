@@ -27,6 +27,10 @@ func (s *segment) Delete(name string) error {
 
 func (s *segment) GetUserSegments(userId uint) (*models.User, error) {
 	segments, err := s.repository.GetByUserID(userId)
+	// clearing model for response
+	for _, seg := range segments {
+		seg.PerCent = nil
+	}
 	return &models.User{ID: userId, Segments: segments}, err
 }
 

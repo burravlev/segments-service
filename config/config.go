@@ -8,8 +8,9 @@ import (
 
 type (
 	Config struct {
-		DB  `yaml:"datasource"`
-		Log `yaml:"log"`
+		DB    `yaml:"datasource"`
+		Log   `yaml:"log"`
+		Files `yaml:"files"`
 	}
 
 	DB struct {
@@ -18,6 +19,10 @@ type (
 
 	Log struct {
 		Level string `yaml:"level"`
+	}
+
+	Files struct {
+		Path string `yaml:"path"`
 	}
 )
 

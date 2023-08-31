@@ -48,12 +48,10 @@ curl --location --request POST 'http://localhost:8080/api/v1/users/1/segments' \
 ```json
 {   
     "id" : 1,
-    "segments" : [
-        {
-            "name" : "AVITO_TEST_CUPONS", 
-            "delete_at" : "2024-10-02T15:00:00.05Z"
-        }
-    ]
+    "segments" : [{
+        "name" : "AVITO_TEST_COUPONS",
+        "delete_at" : "2024-10-02T15:00:00.05Z"
+    }]
 }
 ```
 ## Создание сегмента с автоматическим зполнением 
