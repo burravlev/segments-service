@@ -10,7 +10,7 @@ Docker (для запуска сервиса)
 Swagger (для документации API)
 GORM (ORM библиотека)
 # Usage
-Запустить сервис можно с помощью команды `sh docker-compose up --build -d`
+Запустить сервис можно с помощью команды ```bash docker-compose up --build -d```
 
 Документацию после завпуска сервиса можно посмотреть по адресу http://localhost:8080/swagger/index.html с портом 8080 по умолчанию
 
