@@ -6,8 +6,6 @@
 package database
 
 import (
-	"fmt"
-
 	"github.com/burravlev/avito-tech-test/config"
 	"github.com/burravlev/avito-tech-test/internal/models"
 	log "github.com/sirupsen/logrus"
@@ -17,9 +15,8 @@ import (
 )
 
 func Connect(cfg *config.DB) (*gorm.DB, error) {
-	fmt.Println(cfg.URL)
 	db, err := gorm.Open(postgres.Open(cfg.URL), &gorm.Config{
-		Logger: logger.Default.LogMode(logger.Info),
+		Logger: logger.Default.LogMode(logger.Error),
 	})
 	if err != nil {
 		return nil, err
