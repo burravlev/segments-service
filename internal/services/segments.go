@@ -6,6 +6,7 @@ import (
 
 	"github.com/burravlev/avito-tech-test/internal/models"
 	"github.com/burravlev/avito-tech-test/internal/repositories"
+	"github.com/google/uuid"
 )
 
 type segment struct {
@@ -41,7 +42,7 @@ func (s *segment) GenerateReport(userId uint, from, to string) (string, error) {
 	}
 	segments, err := s.repository.GetInInterval(userId, f, t)
 
-	filename := fmt.Sprintf(`%d-%s-%s.csv`, userId, from, to)
+	filename := fmt.Sprintf(`%s.csv`, (uuid.New()).String())
 	err = createCSV(marshal(segments), filename)
 	return filename, err
 }

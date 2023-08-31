@@ -24,8 +24,9 @@ func marshal(segments []models.Segment) [][]string {
 	return res
 }
 
+// TODO Put path in config
 func createCSV(values [][]string, filename string) error {
-	path := "files\\" + filename
+	path := "files/" + filename
 	f, err := os.Create(path)
 	if err != nil {
 		logrus.Errorf("services.createCSV: %s", err)
