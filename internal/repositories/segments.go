@@ -1,6 +1,7 @@
 package repositories
 
 import (
+	"math/rand"
 	"time"
 
 	"github.com/burravlev/avito-tech-test/internal/models"
@@ -22,7 +23,7 @@ func SegmentRespository(db *gorm.DB) Segment {
 
 // saves segment if not exists
 func (s *segment) Create(segment *models.Segment) error {
-	if 0 < *segment.PerCent && *segment.PerCent <= 100 {
+	if segment.PerCent != nil {
 		return s.create(segment)
 	}
 
@@ -58,24 +59,29 @@ func (s *segment) create(segment *models.Segment) error {
 	if err != nil {
 		return err
 	}
-	err = tx.Model(&models.Segment{}).Distinct("user_id").Find(&users).Error
-	segments := autoSegments(users, *segment.PerCent, segment.Name)
+	err = tx.Model(&models.Segment{}).Distinct("user_id").Where("user_id is not null").Find(&users).Error
+	segments := AutoSegments(users, *segment.PerCent, segment.Name)
 	err = s.db.Clauses(clause.OnConflict{DoNothing: true}).Create(&segments).Error
 	return nil
 }
 
-func autoSegments(users []uint, perCent int, name string) []models.Segment {
-	segments := []models.Segment{}
-	frequency := 100 / perCent
-	for i := range users {
-		if i%frequency == 0 {
-			segments = append(segments, models.Segment{
-				UserID: &users[i],
-				Name:   name,
-			})
-		}
+// generate list of segments with users
+func AutoSegments(users []uint, perCent int, name string) []models.Segment {
+	Shuffle(users)
+	n := len(users) * perCent / 100
+	segments := make([]models.Segment, n)
+	for i := 0; i < n; i++ {
+		segments[i] = models.Segment{UserID: &users[i], Name: name}
 	}
 	return segments
+}
+
+func Shuffle(arr []uint) {
+	rand.New(rand.NewSource(time.Now().UnixNano()))
+	for i := len(arr) - 1; i > 0; i-- {
+		j := rand.Intn(i + 1)
+		arr[i], arr[j] = arr[j], arr[i]
+	}
 }
 
 func (s *segment) Delete(name string) error {

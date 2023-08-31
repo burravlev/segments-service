@@ -1,9 +1,8 @@
 package main
 
 import (
-	_ "github.com/burravlev/avito-tech-test/docs"
-
 	"github.com/burravlev/avito-tech-test/cmd/app"
+	_ "github.com/burravlev/avito-tech-test/docs"
 )
 
 var configPath = "config.yml"

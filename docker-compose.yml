@@ -2,12 +2,24 @@ version: '3.1'
 
 services:
   postgres:
-    image: 'postgres:latest'
+    container_name: postgres
+    image: postgres
     restart: always
     environment:
-      - 'POSTGRES_USER=postgres'
-      - 'POSTGRES_PASSWORD=fgGxgIllJf'
+      POSTGRES_DB: segments_db
+      POSTGRES_USER: root
+      POSTGRES_PASSWORD: fgGxgIllJf
     ports:
-      - '5432'
+      - 5432:5432
+  app:
+    links: 
+      - postgres
+    depends_on:
+      - postgres
+    container_name: app
+    build: .
+    ports:
+      - 8080:8080
     volumes: 
-      - ./init.sql:/docker-entrypoint-initdb.d/init.sql
+      - .:/var/server
+    restart: always

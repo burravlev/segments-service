@@ -1,4 +1,5 @@
 datasource:
-  url: "postgres://root:fxgQb4Xi@45.12.237.118:5432/segments_db"
+  # url: "postgres://root:fxgQb4Xi@45.12.237.118:5432/segments_db0"
+  url: "postgres://root:fgGxgIllJf@postgres:5432/segments_db?sslmode=disable"
 log:
   level: info
